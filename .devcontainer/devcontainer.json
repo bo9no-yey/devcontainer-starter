@@ -1,0 +1,31 @@
+{
+  // ドキュメント「開発コンテナに Claude Code を追加する」の手順 1 をベースに、
+  // ~/.claude ボリュームの所有者問題を避けるため image の代わりに Dockerfile を使う
+  "name": "Claude Code Dev Container",
+  // ベースイメージ（Ubuntu のバージョン）は Dockerfile の FROM 行で指定
+  "build": { "dockerfile": "Dockerfile" },
+
+  // 「権限プロンプトなしで実行する」: CLI は root 起動だと --dangerously-skip-permissions を拒否するため非 root ユーザーを明示
+  // （base:ubuntu イメージの既定の非 root ユーザーは vscode）
+  "remoteUser": "vscode",
+
+  "features": {
+    // Claude Code 機能だけだと "Failed to install Node.js and npm" が出ることがあるため、
+    // ドキュメント記載の対処として Node.js 機能を Claude Code 機能の上に置いている
+    // （version 未指定なら既定は "lts"）
+    "ghcr.io/devcontainers/features/node:1": {},
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+  },
+
+  // 「再構築時に認証と設定を保持する」: ~/.claude を名前付きボリュームに
+  // ${devcontainerId} でプロジェクトごとに状態を分離（リファレンス設定と同じ方式）
+  // マウント先の所有者は Dockerfile で vscode に合わせてある
+  "mounts": [
+    "source=claude-code-config-${devcontainerId},target=/home/vscode/.claude,type=volume"
+  ],
+
+  "containerEnv": {
+    // ~/.claude.json もボリューム内に書かせるため、マウント先と同じパスを指定
+    "CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+  }
+}
