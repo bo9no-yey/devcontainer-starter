@@ -14,7 +14,9 @@
     // ドキュメント記載の対処として Node.js 機能を Claude Code 機能の上に置いている
     // （version 未指定なら既定は "lts"）
     "ghcr.io/devcontainers/features/node:1": {},
-    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {}
+    "ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+    // GitHub CLI (gh)。リポジトリ作成や PR 操作をコンテナ内から行うため
+    "ghcr.io/devcontainers/features/github-cli:1": {}
   },
 
   // 「再構築時に認証と設定を保持する」: ~/.claude を名前付きボリュームに
